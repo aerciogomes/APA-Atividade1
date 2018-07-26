@@ -1,10 +1,10 @@
 #include <stdio.h>
-#define SIZE 4
+#define MAX 4
 
-void insertionSort(int ar[]) //função insertionsort
+void insertionSort(int ar[]) //funÃ§Ã£o insertionsort
 {
    int i, atual, j;
-   for (i = 1; i < SIZE; i++) //percorrer todo o array
+   for (i = 1; i < MAX; i++) //percorrer todo o array
    {
        atual = ar[i];
        j = i-1;
@@ -18,11 +18,11 @@ void insertionSort(int ar[]) //função insertionsort
 }
 
 main(){
-	int ar[SIZE] = {4, 6, 1, 2}; //array a ser ordenado
+	int ar[MAX] = {7, 9, 1 ,0}; //array a ser ordenado
 	int i = 0;
 
     printf("Array a ser ordenado: ");
-	for (i = 0; i < SIZE; i++) //printar o array antes de ordenar
+	for (i = 0; i < MAX; i++) //printar o array antes de ordenar
 	{
 		printf("%d", *(ar + i));
 	}
@@ -31,7 +31,7 @@ main(){
 	insertionSort(ar); //ordenando o array
 
 	printf("Array ordenado: ");
-	for (i = 0; i < SIZE; i++) //printar o array ordenado
+	for (i = 0; i < MAX; i++) //printar o array ordenado
 	{
 		printf("%d", *(ar + i));
 	}
