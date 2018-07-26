@@ -30,7 +30,7 @@ void SelectionShort(int ar[MAX]){
 
 int main (){
 	
-int ar[MAX] = {1, 0, 9, 7, 3, 4, 8, 2, 0, 1};
+int ar[MAX] = {2, 1, 3, 10, 7, 0, 3, 6, 0, 11};
 
 SelectionShort(ar);
 
