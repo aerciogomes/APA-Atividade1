@@ -8,8 +8,7 @@ void insertionSort(int ar[]) //função insertionsort
    {
        atual = ar[i];
        j = i-1;
-       while (j >= 0 && ar[j] > atual) /* Move elements of arr[0..i-1], that are greater than key, to one position ahead of their current position */
-       {
+       while (j >= 0 && ar[j] > atual){
            ar[j+1] = ar[j];
            j = j-1;
        }
