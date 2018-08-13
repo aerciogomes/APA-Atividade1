@@ -1,2 +1,2 @@
-make: quicksort.c
-	gcc quicksort.c -o quicksort
+make: mergesort.c
+	gcc mergesort.c -o mergesort
