@@ -13,6 +13,9 @@ typedef struct{
 
 }aresta; // define as arestas
 
+int A[MAX][MAX]; //matriz com os pesos das arestas, sendo i e j os respectivos vertices
+int numV; // Numero de vértices
+
 typedef struct{
 
 	aresta data[MAX];
@@ -22,8 +25,6 @@ typedef struct{
 
 listaresta lista; // lista de aresta
 
-int A[MAX][MAX]; //matriz com os pesos das arestas, sendo i e j os respectivos vertices
-int numV; // Numero de vértices
 
 listaresta listaux; //lista final
 
@@ -114,7 +115,7 @@ int main(int argc, char const *argv[])
 
 	FILE *arquivo;
 
-	arquivo = fopen("dij50.txt","r");
+	arquivo = fopen("dij10.txt","r");
 
 	if(arquivo == NULL){
 		printf("erro");
@@ -122,27 +123,19 @@ int main(int argc, char const *argv[])
 	}else{
 		fgets(ch,999,arquivo);
 
-		tam1 = atoi(ch);
+		numV = atoi(ch);
 
-		numV = tam1;
+		for(i = nlinha;!(feof(arquivo));i++){
 
-		while(1){
-
-			int k = nlinha;
-
+			int k = i;
 			fgets(ch,999,arquivo);
-			if (feof(arquivo))
-			{
-				break;
-			}
 
 			key = strtok(ch,"\t");
 
 			while(key != NULL){
-				G[nlinha][++k] = atoi(key);
+				G[i][++k] = atoi(key);
 				key = strtok(NULL,"\t");
 			}
-			nlinha++;
 
 		}
 	}
