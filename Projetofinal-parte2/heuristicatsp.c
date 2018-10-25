@@ -34,7 +34,7 @@ int calculaTangente(int x1, int y1,int x2,int y2);
 void imprimir_matriz(struct matriz);
 void linha();
 void lerArquivoInstancias(struct vertice*,char*);
-void ler_arquivo_matriz(struct matriz*, char*);
+void ler_arquivo_matriz(struct matriz* m, char* arquivo);
 
 void imprimiVertice(struct vertice);
 
@@ -50,10 +50,14 @@ int main(){
 
 	struct vertice v;
 
-	lerArquivoInstancias(&v, "arquivo2.txt"); // no arquivo deve ser retirado o EOF e o nome dos vertices;
-	imprimiVertice(v);
+	//lerArquivoInstancias(&v, "inst48.txt"); // no arquivo deve ser retirado o EOF e o nome dos vertices;
+	//imprimiVertice(v);
 
-	ConstruirMatriz(&m,v);
+	//ConstruirMatriz(&m,v);
+
+	ler_arquivo_matriz(&m, "arquivo");
+
+
 
     imprimir_matriz(m);
 
@@ -115,7 +119,7 @@ void lerArquivoInstancias(struct vertice* v,char* arquivo){
     fclose(fp);
 
 }
-void ler_arquivo_matriz(struct matriz* m, char* arquivo) {
+void ler_arquivo_matriz(struct matriz* m, char* arquivo){
     FILE* fp = fopen(arquivo, "r");
 
     fscanf(fp, "%d\n", &m->numero_elementos);
@@ -139,18 +143,20 @@ void construir_caminho(struct matriz m, int* caminho) {
     for(int i = 0; i < m.numero_elementos; i++) {
         inseridos[i] = FALSE;
     }
+    int k;
 
     caminho[0] = 0;
     inseridos[0] = TRUE;
 
     for(int i = 0; i < m.numero_elementos; i++) {
+    	k = caminho[i];
         int valor_referencia = INT_MAX;
         int vizinho_selecionado = 0;
 
         for(int j = 0; j < m.numero_elementos; j++) {
-            if(!inseridos[j] && valor_referencia > m.elementos[i][j]) {
+            if(!inseridos[j] && valor_referencia > m.elementos[k][j]) {
                 vizinho_selecionado = j;
-                valor_referencia = m.elementos[i][j];
+                valor_referencia = m.elementos[k][j];
             }
         }
 
