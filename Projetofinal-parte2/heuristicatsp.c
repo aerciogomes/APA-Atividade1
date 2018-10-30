@@ -4,6 +4,7 @@
 #include <sys/time.h>
 #include <sys/resource.h>
 #include <string.h>
+#include <time.h>
 #include <math.h>
 
 #define TRUE 1
@@ -40,9 +41,14 @@ void imprimiVertice(struct vertice);
 
 void ConstruirSwap(struct matriz , int* , int* );
 void Movimento2(struct matriz, int* , int* );
+void Construir2_opt(struct matriz m, int* solucao_inicial, int* melhor_vizinho);
 void ImplementarVND(struct matriz, int *, int*);
 
 void CopiarCaminho(struct matriz,int*,int*);
+void ImplementarGRASP(struct matriz m, int * solucao_inicial, int maxgrasp, int *solucao_final);
+void CronstrucaoLCR(struct matriz m, int * solucao, float alfa);
+int RemoveElemento(int numero, int *caminho, int loc);
+void OrdenaSolucao(struct matriz m, int* solucao_inicial);
 
 int main(){
 
@@ -55,7 +61,7 @@ int main(){
 
 	//ConstruirMatriz(&m,v);
 
-	ler_arquivo_matriz(&m, "arquivo");
+	ler_arquivo_matriz(&m, "bays29.txt");
 
 
 
@@ -71,7 +77,8 @@ int main(){
 
     int *melhorv = malloc((m.numero_elementos + 1) * sizeof(int));
 
-    ImplementarVND(m,solucao_inicial,melhorv);
+    //ImplementarVND(m,solucao_inicial,melhorv);
+    ImplementarGRASP(m,solucao_inicial,3,melhorv);
 
 }
 void lerArquivoInstancias(struct vertice* v,char* arquivo){
@@ -315,78 +322,6 @@ void ConstruirSwap(struct matriz m, int* solucao_inicial, int* melhor_vizinho){
     printf("Custo: %d\n\n",custo_solucao_tmp);
 }
 
-/*void ConstruirSwap(struct matriz m, int* solucao_inicial, int* melhor_vizinho){
-	int* solucao_tmp = malloc((m.numero_elementos + 1) * sizeof(int));
-    int custo_referencia = calcular_custo(m, solucao_inicial);
-    int tmp;
-    int custo_solucao_tmp;
-
-    CopiarCaminho(m, solucao_inicial, melhor_vizinho);
-
-    for(int i = 0;i<m.numero_elementos;i++){
-    	CopiarCaminho(m, solucao_inicial, solucao_tmp);
-    	if(i == 0){
-    		tmp = solucao_tmp[i];
-           	solucao_tmp[i] = solucao_tmp[i+1];
-          	solucao_tmp[i+1] = tmp;
-
-           	solucao_tmp[m.numero_elementos] = solucao_tmp[i];
-
-           	printf("\nTeste: ");
-            imprimir_caminho(m.numero_elementos+1,solucao_tmp);
-
-            custo_solucao_tmp = calcular_custo(m, solucao_tmp);
-            printf("Custo: %d\n\n",custo_solucao_tmp);
-
-	        if(custo_solucao_tmp < custo_referencia) {
-	        	custo_referencia = custo_solucao_tmp;
-	            CopiarCaminho(m, solucao_tmp, melhor_vizinho);
-           	}
-           	continue;
-    	}
-    	if(i == (m.numero_elementos -1)){
-    		tmp = solucao_tmp[i];
-    		solucao_tmp[i] = solucao_tmp[0];
-    		solucao_tmp[0] = tmp;
-
-    		solucao_tmp[m.numero_elementos] = solucao_tmp[0];
-
-    		printf("\nTeste: ");
-            imprimir_caminho(m.numero_elementos+1,solucao_tmp);
-
-            custo_solucao_tmp = calcular_custo(m, solucao_tmp);
-            printf("Custo: %d\n\n",custo_solucao_tmp);
-
-    		if(custo_solucao_tmp < custo_referencia) {
-	        	custo_referencia = custo_solucao_tmp;
-	            CopiarCaminho(m, solucao_tmp, melhor_vizinho);
-           	}
-           	continue;
-    	}
-
-    	tmp = solucao_tmp[i];
-        solucao_tmp[i] = solucao_tmp[i+1];
-        solucao_tmp[i+1] = tmp;
-
-        printf("\nTeste: ");
-        imprimir_caminho(m.numero_elementos+1,solucao_tmp);
-
-        custo_solucao_tmp = calcular_custo(m, solucao_tmp);
-        printf("Custo: %d\n\n",custo_solucao_tmp);
-
-        if(custo_solucao_tmp < custo_referencia) {
-            custo_referencia = custo_solucao_tmp;
-            CopiarCaminho(m, solucao_tmp, melhor_vizinho);
-        }
-
-    }
-    printf("\nMelhor: ");
-    imprimir_caminho(m.numero_elementos+1,melhor_vizinho);
-    custo_solucao_tmp = calcular_custo(m, melhor_vizinho);
-    printf("Custo: %d\n\n",custo_solucao_tmp);
-
-}
-*/
 void Movimento2(struct matriz m, int* solucao_inicial, int* melhor_vizinho){
 	int* solucao_tmp = malloc((m.numero_elementos + 1) * sizeof(int));
     int custo_referencia = calcular_custo(m, solucao_inicial);
@@ -425,6 +360,39 @@ void Movimento2(struct matriz m, int* solucao_inicial, int* melhor_vizinho){
     printf("Custo: %d\n\n",custo_solucao_tmp);
 
 }
+/*void Construir2_opt(struct matriz m, int* solucao_inicial, int* melhor_vizinho){
+	int* solucao_tmp = malloc((m.numero_elementos + 1) * sizeof(int));
+    int* solucao_aux = malloc((m.numero_elementos + 1) * sizeof(int));
+    int custo_referencia = calcular_custo(m, solucao_inicial);
+    int tmp;
+    int custo_solucao_tmp;
+
+    //caminho - sequencia de vertices
+    //matrix - pesos das ligações dos vertices
+    CopiarCaminho(m, solucao_inicial, melhor_vizinho);
+    
+    for(int i =0;i<m.numero_elementos-2;i++){
+    	CopiarCaminho(m, solucao_inicial, solucao_tmp);
+    	for(int j = i+2;j<m.numero_elementos;j++){
+    		CopiarCaminho(m, solucao_inicial, solucao_tmp);
+            CopiarCaminho(m, solucao_tmp, solucao_aux);
+            for(int k = j, int f = i;k>i;k--,f++){
+
+                tmp = solucao_aux[k];
+                solucao_aux[k] = solucao_aux[f];
+                solucao_aux[f] = tmp;
+
+            }   		
+
+    	}
+    }
+
+    printf("\nMelhor: ");
+    imprimir_caminho(m.numero_elementos+1,melhor_vizinho);
+    custo_solucao_tmp = calcular_custo(m, melhor_vizinho);
+    printf("Custo: %d\n\n",custo_solucao_tmp);
+
+}*/
 
 void ImplementarVND(struct matriz m, int *solucao, int*melhor_vizinho){
 	int r = 2; // sendo as estruturas - movimento2 e swap
@@ -467,4 +435,89 @@ void CopiarCaminho(struct matriz m,int*orig,int*dest){
 		dest[i] = orig[i];
 	}
 
+}
+int RemoveElemento(int numero, int *caminho, int loc){
+    int i;
+    int valor = caminho[loc];
+
+    if(loc == numero-1){
+        return valor;
+    }
+
+    for(i = loc;i<numero-1;i++){
+        caminho[i] = caminho[i+1];
+    }
+
+    return valor;
+}
+/*void OrdenaSolucao(struct matriz m, int* solucao_inicial){
+    int i,j;
+    int menor;
+    // 1 - 2 - 3 - 4
+    int* solucao_tmp = malloc((m.numero_elementos + 1) * sizeof(int));
+    CopiarCaminho(m,solucao_inicial, solucao_tmp);
+
+    menor = m[solucao_inicial[0]][solucao_inicial[1]];
+    int aux;
+    int deslocamento = 0;
+
+    for(i = 1;i<m.numero_elementos;i++){
+        aux = ,
+    }
+}*/
+void CronstrucaoLCR(struct matriz m, int * solucao, float alfa){
+    int* solucao_tmp = malloc((m.numero_elementos + 1) * sizeof(int));
+    int* solucao_final = malloc((m.numero_elementos + 1) * sizeof(int));
+    int numero = m.numero_elementos;
+    int vertice;
+    int i;
+    int aux;
+    int j;
+    CopiarCaminho(m,solucao, solucao_tmp);
+    srand(time(NULL));
+    for(i=0;i<m.numero_elementos;i++){
+        if(numero > 1){
+            aux = (int)(alfa*numero);
+        }else{
+            aux = 0;
+        }
+        printf("\naux = %d\n",aux);
+        if(aux > 1){
+            j = rand() % (aux-1);
+        }else{
+            j = 0;
+        }
+        printf("\n j = %d",j);
+
+        printf("\nnumero = %d",numero);
+
+        vertice = RemoveElemento(numero,solucao_tmp,j);
+        if(numero > 0){
+            numero--;
+        }
+
+        solucao_final[i] = vertice;
+    }
+
+    CopiarCaminho(m,solucao_final,solucao);
+}
+
+void ImplementarGRASP(struct matriz m, int * solucao_inicial, int maxgrasp, int *solucao_final){
+    int valor_referencia = INT_MAX;
+    int custo_referencia;
+
+    for(int i = 0;i<maxgrasp;i++){
+        CronstrucaoLCR(m,solucao_inicial,0.5);
+        printf("\nSolucao Grasp = ");
+        imprimir_caminho(m.numero_elementos+1,solucao_inicial);
+        custo_referencia = calcular_custo(m,solucao_inicial);
+        printf("\n Custo = %d\n",custo_referencia);
+        ImplementarVND(m,solucao_inicial,solucao_final);
+        custo_referencia = calcular_custo(m,solucao_final);
+
+        if(custo_referencia < valor_referencia){
+            valor_referencia = custo_referencia;
+            solucao_final = solucao_final;
+        }
+    }
 }
