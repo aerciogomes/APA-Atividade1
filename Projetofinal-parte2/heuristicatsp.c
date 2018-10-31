@@ -26,6 +26,10 @@ struct vertice{
 	int cord2[MAX];
 	int tamanho;
 };
+struct lista{
+    int custo;
+    int numV;
+};
 
 void construir_caminho(struct matriz, int*);
 void ConstruirMatriz(struct matriz*,struct vertice);
@@ -62,21 +66,22 @@ int main(){
 
 	//ConstruirMatriz(&m,v);
 
-	ler_arquivo_matriz(&m, "bays29.txt");
+	ler_arquivo_matriz(&m, "arquivo");
 
 
 
     imprimir_matriz(m);
 
     int *solucao_inicial = malloc((m.numero_elementos + 1) * sizeof(int));
-    construir_caminho(m, solucao_inicial);
+    int *melhorv = malloc((m.numero_elementos + 1) * sizeof(int));
+    /*construir_caminho(m, solucao_inicial);
     printf("Solucao inicial: ");
     imprimir_caminho(m.numero_elementos+1, solucao_inicial);
 
     int custo_solucao_inicial = calcular_custo(m, solucao_inicial);
     printf("Custo solução inicial: %d\n", custo_solucao_inicial);
 
-    int *melhorv = malloc((m.numero_elementos + 1) * sizeof(int));
+    
 
 
     Construir2opt(m,melhorv,solucao_inicial);
@@ -84,7 +89,9 @@ int main(){
     imprimir_caminho(m.numero_elementos+1, melhorv);
 
     custo_solucao_inicial = calcular_custo(m, melhorv);
-    printf("Custo solução fianl: %d\n", custo_solucao_inicial);
+    printf("Custo solução fianl: %d\n", custo_solucao_inicial);*/
+
+    //OrdenaSolucao(m,solucao_inicial);
 
     //ImplementarVND(m,solucao_inicial,melhorv);
     ImplementarGRASP(m,solucao_inicial,3,melhorv);
@@ -447,21 +454,48 @@ int RemoveElemento(int numero, int *caminho, int loc){
 
     return valor;
 }
-/*void OrdenaSolucao(struct matriz m, int* solucao_inicial){
+void OrdenaSolucao(struct matriz m, int* solucao_inicial){
     int i,j;
-    int menor;
+    int aux = 0;
+    struct lista lista[m.numero_elementos];
+
     // 1 - 2 - 3 - 4
-    int* solucao_tmp = malloc((m.numero_elementos + 1) * sizeof(int));
-    CopiarCaminho(m,solucao_inicial, solucao_tmp);
-
-    menor = m[solucao_inicial[0]][solucao_inicial[1]];
-    int aux;
-    int deslocamento = 0;
-
-    for(i = 1;i<m.numero_elementos;i++){
-        aux = ,
+    for(i=0;i<m.numero_elementos;i++){ // gerando uma lista de custos de cada vertice
+        for(j=0;j<m.numero_elementos;j++){
+            aux = aux + m.elementos[i][j];
+        }
+        lista[i].numV = i;
+        lista[i].custo = aux;
+        aux = 0;
     }
-}*/
+    for(i=0;i<m.numero_elementos;i++){
+        solucao_inicial[i] = lista[i].numV;
+    }
+    printf("\nLista de melhores vertices: ");
+    imprimir_caminho(m.numero_elementos+1,solucao_inicial);
+    //Proximo passo é ordenar essa lista
+    int menor;
+
+    for(i=0;i<m.numero_elementos;i++){
+        for(j=i+1;j<m.numero_elementos;j++){
+            if(lista[j].custo < lista[i].custo){
+                aux = lista[j].numV;
+                menor = lista[j].custo;
+                lista[j].numV = lista[i].numV;
+                lista[j].custo = lista[i].custo;
+                lista[i].custo = menor;
+                lista[i].numV = aux;
+            }
+        }
+    }
+
+    for(i=0;i<m.numero_elementos;i++){
+        solucao_inicial[i] = lista[i].numV;
+    }
+    printf("\nLista de melhores vertices ordenada: ");
+    imprimir_caminho(m.numero_elementos+1,solucao_inicial);
+
+}
 void CronstrucaoLCR(struct matriz m, int * solucao, float alfa){
     int* solucao_tmp = malloc((m.numero_elementos + 1) * sizeof(int));
     int* solucao_final = malloc((m.numero_elementos + 1) * sizeof(int));
@@ -471,6 +505,10 @@ void CronstrucaoLCR(struct matriz m, int * solucao, float alfa){
     int aux;
     int j;
     CopiarCaminho(m,solucao, solucao_tmp);
+    printf("\nSolucao inicial:: ");
+    imprimir_caminho(m.numero_elementos+1,solucao_tmp);
+    int custo_solucao_tmp = calcular_custo(m, solucao_tmp);
+    printf("Custo: %d\n\n",custo_solucao_tmp);
     srand(time(NULL));
     for(i=0;i<m.numero_elementos;i++){
         if(numero > 1){
@@ -502,9 +540,12 @@ void CronstrucaoLCR(struct matriz m, int * solucao, float alfa){
 void ImplementarGRASP(struct matriz m, int * solucao_inicial, int maxgrasp, int *solucao_final){
     int valor_referencia = INT_MAX;
     int custo_referencia;
+    OrdenaSolucao(m,solucao_inicial);
 
     for(int i = 0;i<maxgrasp;i++){
+        linha();
         CronstrucaoLCR(m,solucao_inicial,0.5);
+        linha();
         printf("\nSolucao Grasp = ");
         imprimir_caminho(m.numero_elementos+1,solucao_inicial);
         custo_referencia = calcular_custo(m,solucao_inicial);
