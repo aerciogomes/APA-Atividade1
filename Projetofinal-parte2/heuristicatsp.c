@@ -94,7 +94,7 @@ int main(){
     //OrdenaSolucao(m,solucao_inicial);
 
     //ImplementarVND(m,solucao_inicial,melhorv);
-    ImplementarGRASP(m,solucao_inicial,3,melhorv);
+    ImplementarGRASP(m,solucao_inicial,10,melhorv);
 
 }
 void lerArquivoInstancias(struct vertice* v,char* arquivo){
@@ -504,12 +504,14 @@ void CronstrucaoLCR(struct matriz m, int * solucao, float alfa){
     int i;
     int aux;
     int j;
+    OrdenaSolucao(m,solucao); /// Perguntar sobre onde fica a Lista de Melhores candidatos.
+                              /// Se vai gerar uma lista inicial ou ficará gerando a mesma lista de melhores.
     CopiarCaminho(m,solucao, solucao_tmp);
     printf("\nSolucao inicial:: ");
     imprimir_caminho(m.numero_elementos+1,solucao_tmp);
     int custo_solucao_tmp = calcular_custo(m, solucao_tmp);
     printf("Custo: %d\n\n",custo_solucao_tmp);
-    srand(time(NULL));
+    //srand(time(NULL));
     for(i=0;i<m.numero_elementos;i++){
         if(numero > 1){
             aux = (int)(alfa*numero);
@@ -540,7 +542,9 @@ void CronstrucaoLCR(struct matriz m, int * solucao, float alfa){
 void ImplementarGRASP(struct matriz m, int * solucao_inicial, int maxgrasp, int *solucao_final){
     int valor_referencia = INT_MAX;
     int custo_referencia;
-    OrdenaSolucao(m,solucao_inicial);
+
+    //OrdenaSolucao(m,solucao_inicial);
+    srand(time(NULL));
 
     for(int i = 0;i<maxgrasp;i++){
         linha();
@@ -550,12 +554,12 @@ void ImplementarGRASP(struct matriz m, int * solucao_inicial, int maxgrasp, int 
         imprimir_caminho(m.numero_elementos+1,solucao_inicial);
         custo_referencia = calcular_custo(m,solucao_inicial);
         printf("\n Custo = %d\n",custo_referencia);
-        ImplementarVND(m,solucao_inicial,solucao_final);
+        /*ImplementarVND(m,solucao_inicial,solucao_final);
         custo_referencia = calcular_custo(m,solucao_final);
 
         if(custo_referencia < valor_referencia){
             valor_referencia = custo_referencia;
             solucao_final = solucao_final;
-        }
+        }*/
     }
 }
