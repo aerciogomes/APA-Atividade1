@@ -60,13 +60,12 @@ int main(){
 	struct matriz m;
 
 	struct vertice v;
+	lerArquivoInstancias(&v, "inst48.txt"); // no arquivo deve ser retirado o EOF e o nome dos vertices;
+	imprimiVertice(v);
 
-	//lerArquivoInstancias(&v, "inst48.txt"); // no arquivo deve ser retirado o EOF e o nome dos vertices;
-	//imprimiVertice(v);
+	ConstruirMatriz(&m,v);
 
-	//ConstruirMatriz(&m,v);
-
-	ler_arquivo_matriz(&m, "arquivo");
+	//ler_arquivo_matriz(&m, "berlin52.txt");
 
 
 
@@ -74,22 +73,14 @@ int main(){
 
     int *solucao_inicial = malloc((m.numero_elementos + 1) * sizeof(int));
     int *melhorv = malloc((m.numero_elementos + 1) * sizeof(int));
-    /*construir_caminho(m, solucao_inicial);
+    construir_caminho(m, solucao_inicial);
     printf("Solucao inicial: ");
     imprimir_caminho(m.numero_elementos+1, solucao_inicial);
 
     int custo_solucao_inicial = calcular_custo(m, solucao_inicial);
     printf("Custo solução inicial: %d\n", custo_solucao_inicial);
 
-    
 
-
-    Construir2opt(m,melhorv,solucao_inicial);
-    printf("Solucao final: ");
-    imprimir_caminho(m.numero_elementos+1, melhorv);
-
-    custo_solucao_inicial = calcular_custo(m, melhorv);
-    printf("Custo solução fianl: %d\n", custo_solucao_inicial);*/
 
     //OrdenaSolucao(m,solucao_inicial);
 
@@ -397,7 +388,6 @@ void Construir2opt(struct matriz m, int *solucao_final, int* solucao_inicial){
     int custo_solucao_tmp = calcular_custo(m, solucao_final);
     printf("Custo: %d\n\n",custo_solucao_tmp);
 }
-
 void ImplementarVND(struct matriz m, int *solucao, int*melhor_vizinho){
 	int r = 2; // sendo as estruturas - movimento2 e swap
 	int i = 1;
@@ -554,12 +544,12 @@ void ImplementarGRASP(struct matriz m, int * solucao_inicial, int maxgrasp, int 
         imprimir_caminho(m.numero_elementos+1,solucao_inicial);
         custo_referencia = calcular_custo(m,solucao_inicial);
         printf("\n Custo = %d\n",custo_referencia);
-        /*ImplementarVND(m,solucao_inicial,solucao_final);
+        ImplementarVND(m,solucao_inicial,solucao_final);
         custo_referencia = calcular_custo(m,solucao_final);
 
         if(custo_referencia < valor_referencia){
             valor_referencia = custo_referencia;
             solucao_final = solucao_final;
-        }*/
+        }
     }
 }
